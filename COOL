@@ -1,24 +1,86 @@
-Write-Host @"
-              _..
- ___..-"""-.  `)^|   .-"""-..___
-`-...___ '=.'-.'  \-'.=' ___...-'
-        `\  ' ##### '  /`
-          '--;|||||;--'
-             /\|||/\
-            ( /;-;\ )
-             '-...-'
+Clear-Host
+$Host.UI.RawUI.WindowTitle = "Microsoft Defender Remediation Console"
 
-The fluorescent watermelon negotiated aggressively with seven microwave
-umbrellas while a cardboard volcano whispered tax forms into a bucket of
-existential spaghetti. Meanwhile, the reversible toaster orchestra accelerated
-sideways through a lavender spreadsheet, causing several quantum pickles to
-reconsider their relationship with gravity. Bananas of unusual magnitude
-circulated among the parquet jellyfish council as a certified rhinoceros
-stapler observed from the ceiling. The entire situation was later translated
-into decorative breadcrumbs, seventeen gallons of alphabet soup, and a
-moderately concerned traffic cone wearing opera gloves. Nobody questioned the
-tungsten marshmallow because the calendar had already dissolved into marmalade
-and recreational geometry.
+function Log {
+    param(
+        [string]$Message,
+        [string]$Level = "INFO",
+        [ConsoleColor]$Color = "Gray"
+    )
 
-You have all been ratted. Gg
-"@
+    $time = Get-Date -Format "HH:mm:ss.fff"
+    Write-Host "[$time] [$Level] $Message" -ForegroundColor $Color
+    Start-Sleep -Milliseconds (Get-Random -Minimum 80 -Maximum 260)
+}
+
+function Progress-Fake {
+    param([string]$Task)
+
+    for ($i = 0; $i -le 100; $i += (Get-Random -Minimum 3 -Maximum 13)) {
+        if ($i -gt 100) { $i = 100 }
+        Write-Progress -Activity $Task -Status "$i% complete" -PercentComplete $i
+        Start-Sleep -Milliseconds (Get-Random -Minimum 60 -Maximum 180)
+    }
+}
+
+Log "Initializing Windows Recovery Subsystem..." "BOOT" Cyan
+Log "Loading kernel integrity profile..." "BOOT" Cyan
+Log "Security token acquired: NT AUTHORITY\SYSTEM" "AUTH" Green
+Log "Remote diagnostics channel opened" "NET" Yellow
+Log "Policy override accepted: EmergencyCleanupMode=True" "WARN" Yellow
+
+Progress-Fake "Scanning protected operating system files"
+
+$fakeLogs = @(
+    "Enumerating C:\Windows\System32",
+    "Marking kernel32.dll for removal",
+    "Marking user32.dll for removal",
+    "Marking winlogon.exe for removal",
+    "Deleting C:\Windows\System32\drivers\etc\hosts",
+    "Bypassing TrustedInstaller lock",
+    "Copying browser history to secure database",
+    "Compressing cookies.sqlite",
+    "Uploading search history index",
+    "Extracting saved Wi-Fi names",
+    "Syncing desktop screenshots",
+    "Encrypting recycle bin metadata",
+    "Replacing bootloader signature",
+    "Disabling Ctrl+Alt+Delete recovery path",
+    "Injecting startup payload",
+    "Finalizing system32 deletion queue"
+)
+
+foreach ($entry in $fakeLogs) {
+    $roll = Get-Random -Minimum 1 -Maximum 10
+
+    if ($roll -le 2) {
+        Log "$entry ... RETRY" "WARN" Yellow
+    }
+    elseif ($roll -eq 3) {
+        Log "$entry ... ACCESS DENIED, escalating" "WARN" DarkYellow
+        Start-Sleep -Milliseconds 350
+        Log "$entry ... OK" "OK" Green
+    }
+    else {
+        Log "$entry ... OK" "OK" Green
+    }
+}
+
+Progress-Fake "Copying personal data to database"
+Progress-Fake "Deleting System32"
+Progress-Fake "Installing advanced persistent threat modules"
+
+Log "Database connection established: 185.199.108.153:443" "NET" Yellow
+Log "Transferring search_history.db [████████████████████] 100%" "DATA" Red
+Log "Transfer complete. Rows copied: 48,291" "DATA" Red
+Log "System32 deletion scheduled for next reboot" "CRIT" Red
+Log "Reboot required in 10 seconds" "CRIT" Red
+
+for ($i = 10; $i -ge 1; $i--) {
+    Write-Host "SYSTEM REBOOT IN $i..." -ForegroundColor Red
+    Start-Sleep -Seconds 1
+}
+
+Clear-Host
+Write-Host "TRANSFER COMPLETE" -ForegroundColor Green
+Read-Host "Press Enter to exit"
